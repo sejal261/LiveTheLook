@@ -1,0 +1,176 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+    linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
+    url("/static/images/background.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    overflow:hidden;
+}
+
+.container{
+    width:780px;
+    height:80vh;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+#chatbox{
+    flex:1;
+    overflow-y:auto;
+    padding:10px 25px;
+    background:transparent;
+}
+
+.user{
+    max-width:70%;
+    margin-left:auto;
+    margin-bottom:18px;
+    background:#5b3d2e;
+    color:white;
+    padding:15px 20px;
+    border-radius:25px 25px 5px 25px;
+    line-height:1.5;
+    box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+
+.bot{
+    max-width:70%;
+    background:rgba(255,255,255,0.85);
+    color:#333;
+    padding:15px 20px;
+    border-radius:25px 25px 25px 5px;
+    margin-bottom:18px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.input-area{
+    display:flex;
+    gap:15px;
+    padding:15px 20px;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:35px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    margin-bottom: 10px;
+}
+
+input{
+    flex:1;
+    padding:15px 20px;
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:40px;
+    background:rgba(255,255,255,0.9);
+    font-size:16px;
+    outline:none;
+}
+
+input:focus {
+    background: white;
+    border-color: #5b3d2e;
+}
+
+button{
+    padding:0 25px;
+    border:none;
+    border-radius:40px;
+    background:#5b3d2e;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#3b261c;
+    transform:translateY(-2px);
+}
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#b4b4b4;
+    border-radius:10px;
+}
+
+.menu{
+    position:absolute;
+    top:25px;
+    right:25px;
+    z-index:1000;
+}
+
+#menuBtn{
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.3);
+    color:white;
+    font-size:24px;
+    cursor:pointer;
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+#menuBtn:hover{
+    background:rgba(255,255,255,.3);
+    transform: scale(1.05);
+}
+
+.dropdown{
+    position:absolute;
+    right:0;
+    top:58px;
+    width:250px;
+    display:none;
+    flex-direction:column;
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(20px);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.dropdown a{
+    text-decoration:none;
+    color:#333;
+    padding:15px;
+    font-size:15px;
+    font-weight:500;
+    border-bottom:1px solid rgba(0,0,0,0.05);
+    transition:.3s;
+}
+
+.dropdown a:last-child {
+    border-bottom: none;
+}
+
+.dropdown a:hover{
+    background:#5b3d2e;
+    color:white;
+}

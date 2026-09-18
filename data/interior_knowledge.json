@@ -1,0 +1,37 @@
+{
+    "modern": "Modern interiors use clean lines, neutral colors, simple furniture and minimal decoration.",
+
+    "scandinavian": "Scandinavian interiors focus on light colors, natural wood, cozy textures and functional furniture.",
+
+    "bohemian": "Bohemian interiors include colorful textiles, indoor plants, handcrafted decor and layered patterns.",
+
+    "industrial": "Industrial interiors use exposed brick, concrete, metal, black accents and open spaces.",
+
+    "minimalist": "Minimalism focuses on keeping only essential furniture with lots of open space.",
+
+    "lighting": "Good lighting combines ambient, task and accent lighting to create balance.",
+
+    "living room": "A living room should have a clear focal point, comfortable seating and layered lighting.",
+
+    "bedroom": "Bedrooms should have calming colors, soft lighting and minimal clutter.",
+
+    "kitchen": "A kitchen should follow the work triangle between the sink, stove and refrigerator.",
+
+    "color": "Neutral colors make spaces appear larger while darker colors create depth and coziness.",
+
+    "small_bedroom": {
+        "colors": [
+            "white",
+            "beige",
+            "light grey"
+        ],
+        "furniture": [
+            "storage bed",
+            "wall mounted shelves"
+        ],
+        "avoid": [
+            "large furniture",
+            "dark walls"
+        ]
+    }
+}

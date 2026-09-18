@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Categories — Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <ul class="admin-menu">
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-gauge"></i> Overview</a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.designs_list') }}"><i class="fa-solid fa-layer-group"></i> Manage Designs</a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.add_design') }}"><i class="fa-solid fa-plus"></i> Add New Design</a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.manage_categories') }}" class="active"><i class="fa-solid fa-folder"></i> Categories</a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.manage_styles') }}"><i class="fa-solid fa-palette"></i> Styles</a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Manage Room Categories</h1>
+                <p style="color:#6E6A66;">Add and manage room categories for filtering designs.</p>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:32px;">
+            <!-- Add Form -->
+            <div class="admin-form-card">
+                <h3 style="font-family:'Playfair Display', serif; font-size:1.2rem; margin-bottom:16px;">Add New Category</h3>
+                <form action="{{ url_for('admin.manage_categories') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="form-group">
+                        <label>Category Name *</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Dining Room" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" rows="3" class="form-control" placeholder="Short summary of this room type..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%;">
+                        <i class="fa-solid fa-plus"></i> Create Category
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories Table -->
+            <div class="admin-table-card">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Slug</th>
+                                <th>Description</th>
+                                <th>Designs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in categories %}
+                            <tr>
+                                <td style="font-weight:600;">{{ cat.name }}</td>
+                                <td><code>{{ cat.slug }}</code></td>
+                                <td style="color:#6E6A66; font-size:0.85rem;">{{ cat.description or '—' }}</td>
+                                <td>{{ cat.designs|length }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

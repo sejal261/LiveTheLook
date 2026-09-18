@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Designs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='gallery.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Chatbot</a>
+
+        <h1>🍽 Kitchen Designs</h1>
+        <p class="subtitle">Upload and showcase your kitchen interior projects.</p>
+
+        <div class="gallery">
+            <!-- Render saved designs -->
+            {% for design in designs %}
+            <div class="card">
+                <form id="delete-form-{{ loop.index }}" action="/delete/{{ category }}/{{ design.filename }}"
+                    method="POST" style="display: none;"></form>
+                <div class="delete-btn"
+                    onclick="if(confirm('Are you sure you want to delete this design?')) document.getElementById('delete-form-{{ loop.index }}').submit();"
+                    title="Delete Design">
+                    <i class="fa-solid fa-trash"></i>
+                </div>
+                <button type="button"
+                    class="edit-btn"
+                    data-filename="{{ design.filename }}"
+                    data-title="{{ design.title }}"
+                    data-description="{{ design.description }}"
+                    data-products='{{ design.product_links | tojson }}'
+                    onclick="openEditModal(this)"
+                    title="Edit Design">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <img src="{{ url_for('static', filename='images/' + category + '/' + design.filename) }}"
+                    alt="{{ design.title }}">
+                <h2>{{ design.title }}</h2>
+                <p>{{ design.description }}</p>
+                {% if design.product_links %}
+<div class="product-links">
+    <h3>Products used</h3>
+    <ul>
+        {% for product in design.product_links %}
+        <li>
+            <a href="{{ product.url }}" target="_blank" rel="noopener noreferrer">
+                {{ product.name }}
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+            </div>
+            {% endfor %}
+
+            <!-- Clickable card to trigger file browser upload -->
+            <div class="card add-card" onclick="triggerFileInput()">
+                <h1>+</h1>
+                <p>Add New Design</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Dialog for metadata entry -->
+    <div id="uploadModal" class="modal-overlay">
+        <form class="modal" action="/upload/{{ category }}" method="POST" enctype="multipart/form-data">
+            <h2>New Design</h2>
+
+            <!-- Hidden input for file -->
+            <input type="file" id="fileInput" name="file" accept="image/*" style="display:none"
+                onchange="handleFileSelect(event)" required>
+
+            <div class="preview-box">
+                <img id="imgPreview" src="" alt="Selected Design Preview" style="display:none;">
+                <span id="previewText" style="color: #666;">No image selected</span>
+            </div>
+
+            <input type="text" name="title" id="designTitle" placeholder="Title (e.g. Modern Kitchen)" required>
+
+            <textarea name="description" id="designDescription"
+                placeholder="Description (e.g. Sleek cabinets with built-in oven and lighting/island)"></textarea>
+
+            <textarea name="product_links" id="productLinks"
+    placeholder="Product links — one per line&#10;Kitchen faucet | https://store.com/faucet&#10;Bar stool | https://store.com/stool"></textarea>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-save">Upload Design</button>
+            </div>
+        </form>
+    </div>
+    <div id="editModal" class="modal-overlay">
+    <form id="editForm" class="modal" method="POST">
+        <h2>Edit Design</h2>
+
+        <input type="text" name="title" id="editTitle" required>
+
+        <textarea name="description" id="editDescription"></textarea>
+
+        <textarea name="product_links" id="editProductLinks"
+            placeholder="Product links — one per line"></textarea>
+
+        <div class="modal-buttons">
+            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            <button type="submit" class="btn-save">Save Changes</button>
+        </div>
+    </form>
+</div>
+    <script>
+        function triggerFileInput() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Preview file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('imgPreview').src = e.target.result;
+                    document.getElementById('imgPreview').style.display = 'block';
+                    document.getElementById('previewText').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+                document.getElementById('uploadModal').style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('imgPreview').src = '';
+            document.getElementById('imgPreview').style.display = 'none';
+            document.getElementById('previewText').style.display = 'block';
+            document.getElementById('designTitle').value = '';
+            document.getElementById('designDescription').value = '';
+            document.getElementById('productLinks').value = '';
+        }
+
+        // Close modal if clicked outside
+        window.onclick = function (e) {
+            const modalOverlay = document.getElementById('uploadModal');
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        }
+
+        function openEditModal(button) {
+    const products = JSON.parse(button.dataset.products || "[]");
+
+    document.getElementById("editForm").action =
+        "/edit/{{ category }}/" + encodeURIComponent(button.dataset.filename);
+
+    document.getElementById("editTitle").value = button.dataset.title;
+    document.getElementById("editDescription").value = button.dataset.description;
+
+    document.getElementById("editProductLinks").value = products
+        .map(product => `${product.name} | ${product.url}`)
+        .join("\n");
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+    </script>
+</body>
+
+</html>

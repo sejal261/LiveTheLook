@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Designs — Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <ul class="admin-menu">
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.dashboard') }}">
+                    <i class="fa-solid fa-gauge"></i> Overview
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.designs_list') }}" class="active">
+                    <i class="fa-solid fa-layer-group"></i> Manage Designs
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.add_design') }}">
+                    <i class="fa-solid fa-plus"></i> Add New Design
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.manage_categories') }}">
+                    <i class="fa-solid fa-folder"></i> Categories
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="{{ url_for('admin.manage_styles') }}">
+                    <i class="fa-solid fa-palette"></i> Styles
+                </a>
+            </li>
+            <li class="admin-menu-item" style="margin-top:20px; border-top:1px solid #2C2A29; padding-top:12px;">
+                <a href="{{ url_for('auth.logout') }}" style="color:#e06c75;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Manage Room Designs</h1>
+                <p style="color:#6E6A66;">Total of {{ designs|length }} designs published on your platform.</p>
+            </div>
+            <a href="{{ url_for('admin.add_design') }}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Add New Design
+            </a>
+        </div>
+
+        <div class="admin-table-card">
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Style</th>
+                            <th>Products</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for design in designs %}
+                        <tr>
+                            <td>
+                                <img src="{{ design.image_url }}" alt="{{ design.title }}" style="width:54px; height:54px; object-fit:cover; border-radius:6px;">
+                            </td>
+                            <td style="font-weight:600;">{{ design.title }}</td>
+                            <td><span class="badge-tag" style="position:static; display:inline-block;">{{ design.category_name }}</span></td>
+                            <td>{{ design.style_name }}</td>
+                            <td>{{ design.products|length }} products</td>
+                            <td>
+                                <div style="display:flex; gap:8px;">
+                                    <a href="{{ url_for('public.design_detail', design_id=design.id) }}" target="_blank" class="btn btn-outline btn-sm" title="Preview"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ url_for('admin.edit_design', design_id=design.id) }}" class="btn btn-outline btn-sm" title="Edit"><i class="fa-solid fa-pen"></i></a>
+
+                                    <form action="{{ url_for('admin.delete_design', design_id=design.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete design: {{ design.title }}? This action cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="color:#c5221f; border-color:#fad2cf;" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

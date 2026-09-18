@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Shop Room Looks — Direct Product Links & Decor Guides{% endblock %}
+
+{% block content %}
+<div class="section-container">
+    <div class="section-header" style="align-items: center; margin-bottom: 24px;">
+        <div class="section-title">
+            <h2>Shop Room Looks</h2>
+            <p>Click on any design picture to get direct shopping links for the furniture, lamps, rugs, and decor shown.</p>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <a href="{{ url_for('public.explore', style=request.args.get('style', ''), q=request.args.get('q', '')) }}" 
+               class="filter-pill {% if not selected_category %}active{% endif %}">
+               All Rooms
+            </a>
+            {% for cat in categories %}
+            <a href="{{ url_for('public.explore', category=cat.slug, style=request.args.get('style', ''), q=request.args.get('q', '')) }}" 
+               class="filter-pill {% if selected_category and selected_category.slug == cat.slug %}active{% endif %}">
+               {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <form action="{{ url_for('public.explore') }}" method="GET" style="display:flex; gap:12px; align-items:center;">
+            {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category.slug }}">
+            {% endif %}
+
+            <select name="style" class="filter-select" onchange="this.form.submit()">
+                <option value="">All Styles</option>
+                {% for st in styles %}
+                <option value="{{ st.slug }}" {% if selected_style and selected_style.slug == st.slug %}selected{% endif %}>
+                    {{ st.name }} Style
+                </option>
+                {% endfor %}
+            </select>
+
+            <div style="position:relative; width: 220px;">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search keywords..." class="filter-select" style="width:100%;">
+            </div>
+            <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-search"></i></button>
+            {% if selected_category or selected_style or search_query %}
+            <a href="{{ url_for('public.explore') }}" class="btn btn-outline btn-sm" title="Clear Filters"><i class="fa-solid fa-xmark"></i></a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Designs Gallery Grid -->
+    {% if designs %}
+    <div class="design-grid">
+        {% for design in designs %}
+        <div class="design-card">
+            <div class="design-image-box">
+                <span class="badge-tag">{{ design.category_name }}</span>
+                <span class="badge-style">{{ design.style_name }}</span>
+                <img src="{{ design.image_url }}" alt="{{ design.title }}">
+            </div>
+            <div class="design-content">
+                <h3>{{ design.title }}</h3>
+                <p>{{ design.description }}</p>
+                <div class="design-footer">
+                    <span class="products-count">
+                        <i class="fa-solid fa-cart-shopping"></i> {{ design.products|length }} Product Links
+                    </span>
+                    <a href="{{ url_for('public.design_detail', design_id=design.id) }}" class="btn btn-primary btn-sm">
+                        Get This Look <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center; padding: 60px 20px; background:var(--bg-card); border-radius:var(--radius-md); border:1px solid var(--border-color);">
+        <i class="fa-solid fa-couch" style="font-size: 3rem; color:var(--text-light); margin-bottom: 16px;"></i>
+        <h3 style="font-family:var(--font-heading); font-size:1.5rem; margin-bottom:8px;">No room looks found matching your filters</h3>
+        <p style="color:var(--text-muted); margin-bottom:20px;">Try resetting your search query or selecting a different room category.</p>
+        <a href="{{ url_for('public.explore') }}" class="btn btn-primary">Reset Filters</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

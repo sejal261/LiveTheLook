@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Shop The Look — Interior Room Designs & Direct Product Links{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="fa-solid fa-bag-shopping"></i> Shop The Look — Direct Product Links
+        </div>
+        <h1>Recreate These <span>Room Looks</span> In Your Own Home</h1>
+        <p>Browse curated interior designs and get direct shopping links for the exact furniture, decor, lighting, and accessories used to create each room picture.</p>
+
+        <form action="{{ url_for('public.explore') }}" method="GET" class="hero-search-box">
+            <input type="text" name="q" placeholder="Search bedrooms, modern living rooms, lighting..." required>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-magnifying-glass"></i> Find Room Look
+            </button>
+        </form>
+
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+            <a href="{{ url_for('public.explore') }}" class="btn btn-primary">
+                <i class="fa-solid fa-cart-shopping"></i> Shop Room Looks
+            </a>
+            <button onclick="toggleChatbot()" class="btn btn-outline">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Ask Design AI
+            </button>
+        </div>
+    </div>
+
+    <div class="hero-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop" alt="Modern Living Room Look">
+        <div class="hero-stats-card">
+            <h4><i class="fa-solid fa-bag-shopping" style="color:var(--accent-primary);"></i> {{ total_designs_count }}+ Shoppable Room Looks</h4>
+            <p>Direct links to buy the furniture & decor pictured</p>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section-container">
+    <div class="section-header">
+        <div class="section-title">
+            <h2>Shop By Room Type</h2>
+            <p>Select a room to find designs with exact product recommendations to match the look.</p>
+        </div>
+        <a href="{{ url_for('public.explore') }}" class="btn btn-outline btn-sm">Explore All Rooms</a>
+    </div>
+
+    <div class="category-grid">
+        {% for cat in categories %}
+        <a href="{{ url_for('public.explore', category=cat.slug) }}" class="category-card">
+            <div class="category-icon">
+                {% if cat.slug == 'bedroom' %}<i class="fa-solid fa-bed"></i>
+                {% elif cat.slug == 'livingroom' %}<i class="fa-solid fa-couch"></i>
+                {% elif cat.slug == 'kitchen' %}<i class="fa-solid fa-utensils"></i>
+                {% elif cat.slug == 'bathroom' %}<i class="fa-solid fa-bath"></i>
+                {% elif cat.slug == 'balcony' %}<i class="fa-solid fa-seedling"></i>
+                {% else %}<i class="fa-solid fa-house"></i>{% endif %}
+            </div>
+            <h3>{{ cat.name }}</h3>
+            <p>{{ cat.designs|length }} Shoppable Looks</p>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Designs Section -->
+<section class="section-container" style="padding-top:0;">
+    <div class="section-header">
+        <div class="section-title">
+            <h2>Featured Room Looks</h2>
+            <p>Click any room design to view the exact product links and furniture used in the picture.</p>
+        </div>
+        <a href="{{ url_for('public.explore') }}" class="btn btn-outline btn-sm">Browse Gallery</a>
+    </div>
+
+    <div class="design-grid">
+        {% for design in featured_designs %}
+        <div class="design-card">
+            <div class="design-image-box">
+                <span class="badge-tag">{{ design.category_name }}</span>
+                <span class="badge-style">{{ design.style_name }}</span>
+                <img src="{{ design.image_url }}" alt="{{ design.title }}">
+            </div>
+            <div class="design-content">
+                <h3>{{ design.title }}</h3>
+                <p>{{ design.description }}</p>
+                <div class="design-footer">
+                    <span class="products-count">
+                        <i class="fa-solid fa-cart-shopping"></i> {{ design.products|length }} Product Links Included
+                    </span>
+                    <a href="{{ url_for('public.design_detail', design_id=design.id) }}" class="btn btn-primary btn-sm">
+                        Get This Look <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Call To Action Banner -->
+<section class="section-container">
+    <div style="background: linear-gradient(135deg, var(--text-primary) 0%, #3D3935 100%); color:#ffffff; padding: 48px; border-radius: var(--radius-lg); text-align: center; max-width: 900px; margin: 0 auto;">
+        <h2 style="font-family: var(--font-heading); font-size: 2.2rem; margin-bottom: 16px;">Want Ideas On How To Style Your Space?</h2>
+        <p style="color: var(--text-light); font-size: 1.05rem; margin-bottom: 28px; max-width: 650px; margin-left: auto; margin-right: auto;">Ask our AI Design Assistant for styling recommendations, color combinations, or product suggestions tailored to your budget.</p>
+        <button onclick="toggleChatbot()" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Ask Design AI
+        </button>
+    </div>
+</section>
+{% endblock %}

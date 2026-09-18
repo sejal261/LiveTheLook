@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Shop The Look: {{ design.title }} — Direct Product Links{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="detail-header">
+        <div class="detail-meta">
+            <a href="{{ url_for('public.explore', category=design.category_rel.slug) }}" class="badge-tag" style="position:static;">
+                {{ design.category_name }}
+            </a>
+            {% if design.style_rel %}
+            <a href="{{ url_for('public.explore', style=design.style_rel.slug) }}" class="badge-style" style="position:static; border:1px solid var(--border-color);">
+                {{ design.style_name }} Style
+            </a>
+            {% endif %}
+        </div>
+        <h1 class="detail-title">{{ design.title }}</h1>
+        <p style="color:var(--text-muted); font-size:1.1rem; margin-top:-8px;">Want to recreate this room look? Browse the description, styling tips, and exact product links below.</p>
+    </div>
+
+    <!-- Main High-Res Image -->
+    <div class="detail-image-box">
+        <img src="{{ design.image_url }}" alt="{{ design.title }}">
+    </div>
+
+    <div class="detail-grid">
+        <!-- Main Info -->
+        <div>
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-compass-drafting"></i> Room Aesthetic & Layout
+            </h3>
+            <div class="detail-description">
+                {{ design.description }}
+            </div>
+
+            {% if design.design_tips %}
+            <div class="tips-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> How To Recreate This Look</h4>
+                <p>{{ design.design_tips }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Products Column -->
+        <div>
+            <h3 class="detail-section-title" style="color:var(--accent-primary);">
+                <i class="fa-solid fa-bag-shopping"></i> Products To Get This Look
+            </h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:16px;">Click any item below to open the direct store link and purchase the products shown in the picture.</p>
+
+            {% if design.products %}
+            {% for product in design.products %}
+            <div class="product-card" style="border-left: 4px solid var(--accent-primary);">
+                <div class="product-info">
+                    <h4>{{ product.name }}</h4>
+                    {% if product.description %}
+                    <p>{{ product.description }}</p>
+                    {% endif %}
+                </div>
+                <a href="{{ product.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="white-space:nowrap;">
+                    Shop Item <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color:var(--text-muted); font-style:italic;">No product links listed for this design yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Related Designs -->
+    {% if related_designs %}
+    <div style="margin-top: 64px; padding-top: 40px; border-top:1px solid var(--border-color);">
+        <h3 class="detail-section-title" style="margin-bottom: 24px;">More {{ design.category_name }} Looks To Shop</h3>
+        <div class="design-grid">
+            {% for r_design in related_designs %}
+            <div class="design-card">
+                <div class="design-image-box" style="height: 200px;">
+                    <span class="badge-tag">{{ r_design.category_name }}</span>
+                    <img src="{{ r_design.image_url }}" alt="{{ r_design.title }}">
+                </div>
+                <div class="design-content">
+                    <h3 style="font-size:1.15rem;">{{ r_design.title }}</h3>
+                    <div class="design-footer" style="padding-top:12px;">
+                        <a href="{{ url_for('public.design_detail', design_id=r_design.id) }}" class="btn btn-primary btn-sm">
+                            Get This Look <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
