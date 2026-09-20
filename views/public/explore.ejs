@@ -1,0 +1,85 @@
+<%- include('../partials/header') %>
+
+<div class="section-container">
+    <div class="section-header" style="align-items: center; margin-bottom: 24px;">
+        <div class="section-title">
+            <h2>Shop Room Looks</h2>
+            <p>Click on any design picture to get direct shopping links for the furniture, lamps, rugs, and decor shown.</p>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <a href="/explore?<%= style_slug ? 'style=' + style_slug + '&' : '' %><%= search_query ? 'q=' + encodeURIComponent(search_query) : '' %>" 
+               class="filter-pill <%= !selected_category ? 'active' : '' %>">
+               All Rooms
+            </a>
+            <% categories.forEach(function(cat) { %>
+            <a href="/explore?category=<%= cat.slug %><%= style_slug ? '&style=' + style_slug : '' %><%= search_query ? '&q=' + encodeURIComponent(search_query) : '' %>" 
+               class="filter-pill <%= selected_category && selected_category.slug === cat.slug ? 'active' : '' %>">
+               <%= cat.name %>
+            </a>
+            <% }); %>
+        </div>
+
+        <form action="/explore" method="GET" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <% if (selected_category) { %>
+            <input type="hidden" name="category" value="<%= selected_category.slug %>">
+            <% } %>
+
+            <select name="style" class="filter-select" onchange="this.form.submit()">
+                <option value="">All Styles</option>
+                <% styles.forEach(function(st) { %>
+                <option value="<%= st.slug %>" <%= selected_style && selected_style.slug === st.slug ? 'selected' : '' %>>
+                    <%= st.name %> Style
+                </option>
+                <% }); %>
+            </select>
+
+            <div style="position:relative; width: 220px;">
+                <input type="text" name="q" value="<%= search_query %>" placeholder="Search keywords..." class="filter-select" style="width:100%;">
+            </div>
+            <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <% if (selected_category || selected_style || search_query) { %>
+            <a href="/explore" class="btn btn-outline btn-sm" title="Clear Filters"><i class="fa-solid fa-xmark"></i></a>
+            <% } %>
+        </form>
+    </div>
+
+    <!-- Designs Gallery Grid -->
+    <% if (designs && designs.length > 0) { %>
+    <div class="design-grid">
+        <% designs.forEach(function(design) { %>
+        <div class="design-card">
+            <div class="design-image-box">
+                <span class="badge-tag"><%= design.category_name %></span>
+                <span class="badge-style"><%= design.style_name %></span>
+                <img src="<%= design.image_url %>" alt="<%= design.title %>">
+            </div>
+            <div class="design-content">
+                <h3><%= design.title %></h3>
+                <p><%= design.description %></p>
+                <div class="design-footer">
+                    <span class="products-count">
+                        <i class="fa-solid fa-cart-shopping"></i> <%= design.products.length %> Product Links
+                    </span>
+                    <a href="/design/<%= design.id %>" class="btn btn-primary btn-sm">
+                        Get This Look <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+    <% } else { %>
+    <div style="text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-color); margin-top: 20px;">
+        <i class="fa-solid fa-couch" style="font-size: 3rem; color: var(--text-light); margin-bottom: 16px;"></i>
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 8px;">No Room Looks Found</h3>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">We couldn't find any room designs matching your current filter criteria.</p>
+        <a href="/explore" class="btn btn-primary btn-sm">Reset All Filters</a>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>

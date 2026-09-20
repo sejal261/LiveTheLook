@@ -1,0 +1,174 @@
+<%- include('../partials/header') %>
+
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <ul class="admin-menu">
+            <li class="admin-menu-item">
+                <a href="/admin">
+                    <i class="fa-solid fa-gauge"></i> Overview
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="/admin/designs">
+                    <i class="fa-solid fa-layer-group"></i> Manage Designs
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="/admin/design/add" class="<%= !design ? 'active' : '' %>">
+                    <i class="fa-solid fa-plus"></i> Add New Design
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="/admin/categories">
+                    <i class="fa-solid fa-folder"></i> Categories
+                </a>
+            </li>
+            <li class="admin-menu-item">
+                <a href="/admin/styles">
+                    <i class="fa-solid fa-palette"></i> Styles
+                </a>
+            </li>
+            <li class="admin-menu-item" style="margin-top:20px; border-top:1px solid #2C2A29; padding-top:12px;">
+                <a href="/admin/logout" style="color:#e06c75;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1><%= design ? 'Edit Room Design' : 'Add New Room Design' %></h1>
+                <p style="color:#6E6A66;">Upload room photo, description, design tips, and affiliate product recommendations.</p>
+            </div>
+            <a href="/admin/designs" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+
+        <div class="admin-form-card">
+            <form action="<%= design ? '/admin/design/edit/' + design.id : '/admin/design/add' %>" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Design Title *</label>
+                    <input type="text" name="title" value="<%= design ? design.title : '' %>" class="form-control" placeholder="e.g. Scandinavian Minimalist Bedroom" required>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                    <div class="form-group">
+                        <label>Room Category *</label>
+                        <select name="category_id" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <% categories.forEach(function(cat) { %>
+                            <option value="<%= cat.id %>" <%= design && design.category_id === cat.id ? 'selected' : '' %>>
+                                <%= cat.name %>
+                            </option>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Interior Style</label>
+                        <select name="style_id" class="form-control">
+                            <option value="">Select Style (Optional)</option>
+                            <% styles.forEach(function(st) { %>
+                            <option value="<%= st.id %>" <%= design && design.style_id === st.id ? 'selected' : '' %>>
+                                <%= st.name %> Style
+                            </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                    <div class="form-group">
+                        <label>Main Image File</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                        <small style="color:var(--text-muted); font-size:0.8rem; display:block; margin-top:4px;">Upload from local disk or use image URL below.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Or Image URL</label>
+                        <input type="text" name="image_url" value="<%= design ? design.image_url : '' %>" class="form-control" placeholder="https://images.unsplash.com/...">
+                    </div>
+                </div>
+
+                <% if (design && design.image_url) { %>
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:0.85rem; color:var(--text-muted);">Current Image Preview:</label>
+                    <img src="<%= design.image_url %>" alt="Preview" style="max-height:120px; border-radius:6px; display:block; margin-top:4px;">
+                </div>
+                <% } %>
+
+                <div class="form-group">
+                    <label>Description & Room Vibe</label>
+                    <textarea name="description" rows="4" class="form-control" placeholder="Describe the palette, textures, lighting and materials..."><%= design ? design.description : '' %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>How to Recreate This Look (Design Tips)</label>
+                    <textarea name="design_tips" rows="3" class="form-control" placeholder="Specific advice for placement, accents, and styling..."><%= design ? design.design_tips : '' %></textarea>
+                </div>
+
+                <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" name="is_featured" id="is_featured" <%= !design || design.is_featured ? 'checked' : '' %>>
+                    <label for="is_featured" style="margin-bottom:0; cursor:pointer;">Feature this room look on the homepage</label>
+                </div>
+
+                <!-- Products Table -->
+                <div style="margin-top:32px; border-top:1px solid #F3EFEA; padding-top:24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="font-family:'Playfair Display', serif; font-size:1.2rem;">Shoppable Product Links</h3>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addProductRow()"><i class="fa-solid fa-plus"></i> Add Another Product</button>
+                    </div>
+
+                    <div id="productsContainer">
+                        <% if (design && design.products && design.products.length > 0) { %>
+                            <% design.products.forEach(function(product, index) { %>
+                            <div class="product-row" style="background:#FAF8F5; border:1px solid #F3EFEA; border-radius:8px; padding:16px; margin-bottom:12px; display:grid; grid-template-columns: 2fr 2fr 1fr 40px; gap:12px; align-items:center;">
+                                <input type="text" name="product_name[]" value="<%= product.name %>" placeholder="Product Name (e.g. Linen Bedding)" class="form-control" required>
+                                <input type="text" name="product_url[]" value="<%= product.url %>" placeholder="Store URL (https://...)" class="form-control" required>
+                                <input type="text" name="product_description[]" value="<%= product.description || '' %>" placeholder="Note (optional)" class="form-control">
+                                <button type="button" onclick="this.parentElement.remove()" class="btn btn-outline btn-sm" style="color:#c5221f; border-color:#fad2cf;" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="product-row" style="background:#FAF8F5; border:1px solid #F3EFEA; border-radius:8px; padding:16px; margin-bottom:12px; display:grid; grid-template-columns: 2fr 2fr 1fr 40px; gap:12px; align-items:center;">
+                                <input type="text" name="product_name[]" placeholder="Product Name (e.g. Linen Bedding)" class="form-control">
+                                <input type="text" name="product_url[]" placeholder="Store URL (https://...)" class="form-control">
+                                <input type="text" name="product_description[]" placeholder="Note (optional)" class="form-control">
+                                <button type="button" onclick="this.parentElement.remove()" class="btn btn-outline btn-sm" style="color:#c5221f; border-color:#fad2cf;" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div style="margin-top:32px; display:flex; gap:16px;">
+                    <button type="submit" class="btn btn-primary" style="padding:14px 28px;">
+                        <i class="fa-solid fa-floppy-disk"></i> <%= design ? 'Save Changes' : 'Publish Design Look' %>
+                    </button>
+                    <a href="/admin/designs" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script>
+function addProductRow() {
+    const container = document.getElementById("productsContainer");
+    const div = document.createElement("div");
+    div.className = "product-row";
+    div.style = "background:#FAF8F5; border:1px solid #F3EFEA; border-radius:8px; padding:16px; margin-bottom:12px; display:grid; grid-template-columns: 2fr 2fr 1fr 40px; gap:12px; align-items:center;";
+    div.innerHTML = `
+        <input type="text" name="product_name[]" placeholder="Product Name (e.g. Table Lamp)" class="form-control" required>
+        <input type="text" name="product_url[]" placeholder="Store URL (https://...)" class="form-control" required>
+        <input type="text" name="product_description[]" placeholder="Note (optional)" class="form-control">
+        <button type="button" onclick="this.parentElement.remove()" class="btn btn-outline btn-sm" style="color:#c5221f; border-color:#fad2cf;" title="Remove"><i class="fa-solid fa-trash"></i></button>
+    `;
+    container.appendChild(div);
+}
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+<div class="detail-container">
+    <div class="detail-header">
+        <div class="detail-meta">
+            <a href="/explore?category=<%= design.category_slug %>" class="badge-tag" style="position:static;">
+                <%= design.category_name %>
+            </a>
+            <% if (design.style_name) { %>
+            <a href="/explore?style=<%= design.style_slug %>" class="badge-style" style="position:static; border:1px solid var(--border-color);">
+                <%= design.style_name %> Style
+            </a>
+            <% } %>
+        </div>
+        <h1 class="detail-title"><%= design.title %></h1>
+        <p style="color:var(--text-muted); font-size:1.1rem; margin-top:-8px;">Want to recreate this room look? Browse the description, styling tips, and exact product links below.</p>
+    </div>
+
+    <!-- Main High-Res Image -->
+    <div class="detail-image-box">
+        <img src="<%= design.image_url %>" alt="<%= design.title %>">
+    </div>
+
+    <div class="detail-grid">
+        <!-- Main Info -->
+        <div>
+            <h3 class="detail-section-title">
+                <i class="fa-solid fa-compass-drafting"></i> Room Aesthetic & Layout
+            </h3>
+            <div class="detail-description">
+                <%= design.description %>
+            </div>
+
+            <% if (design.design_tips) { %>
+            <div class="tips-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> How To Recreate This Look</h4>
+                <p><%= design.design_tips %></p>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Products Column -->
+        <div>
+            <h3 class="detail-section-title" style="color:var(--accent-primary);">
+                <i class="fa-solid fa-bag-shopping"></i> Products To Get This Look
+            </h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:16px;">Click any item below to open the direct store link and purchase the products shown in the picture.</p>
+
+            <% if (design.products && design.products.length > 0) { %>
+                <% design.products.forEach(function(product) { %>
+                <div class="product-card" style="border-left: 4px solid var(--accent-primary);">
+                    <div class="product-info">
+                        <h4><%= product.name %></h4>
+                        <% if (product.description) { %>
+                        <p><%= product.description %></p>
+                        <% } %>
+                    </div>
+                    <a href="<%= product.url %>" target="_blank" rel="noopener noreferrer" class="product-btn" title="View store item">
+                        Buy Item <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <div style="background:var(--bg-card); border:1px dashed var(--border-color); border-radius:var(--radius-md); padding:24px; text-align:center; color:var(--text-muted);">
+                    <i class="fa-solid fa-cart-arrow-down" style="font-size:2rem; margin-bottom:8px; color:var(--text-light);"></i>
+                    <p>No specific product links cataloged yet for this room layout.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Related Designs -->
+    <% if (related_designs && related_designs.length > 0) { %>
+    <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-color);">
+        <h3 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 24px;">More <%= design.category_name %> Room Looks</h3>
+        <div class="design-grid">
+            <% related_designs.forEach(function(rel) { %>
+            <div class="design-card">
+                <div class="design-image-box">
+                    <span class="badge-tag"><%= rel.category_name %></span>
+                    <span class="badge-style"><%= rel.style_name %></span>
+                    <img src="<%= rel.image_url %>" alt="<%= rel.title %>">
+                </div>
+                <div class="design-content">
+                    <h3><%= rel.title %></h3>
+                    <p><%= rel.description %></p>
+                    <div class="design-footer">
+                        <span class="products-count"><i class="fa-solid fa-cart-shopping"></i> <%= rel.products.length %> Products</span>
+                        <a href="/design/<%= rel.id %>" class="btn btn-primary btn-sm">Get This Look <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>

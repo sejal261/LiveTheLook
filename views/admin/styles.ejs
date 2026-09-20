@@ -1,29 +1,27 @@
-{% extends "base.html" %}
+<%- include('../partials/header') %>
 
-{% block title %}Manage Styles — Admin Dashboard{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-{% endblock %}
-
-{% block content %}
 <div class="admin-layout">
     <aside class="admin-sidebar">
         <ul class="admin-menu">
             <li class="admin-menu-item">
-                <a href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-gauge"></i> Overview</a>
+                <a href="/admin"><i class="fa-solid fa-gauge"></i> Overview</a>
             </li>
             <li class="admin-menu-item">
-                <a href="{{ url_for('admin.designs_list') }}"><i class="fa-solid fa-layer-group"></i> Manage Designs</a>
+                <a href="/admin/designs"><i class="fa-solid fa-layer-group"></i> Manage Designs</a>
             </li>
             <li class="admin-menu-item">
-                <a href="{{ url_for('admin.add_design') }}"><i class="fa-solid fa-plus"></i> Add New Design</a>
+                <a href="/admin/design/add"><i class="fa-solid fa-plus"></i> Add New Design</a>
             </li>
             <li class="admin-menu-item">
-                <a href="{{ url_for('admin.manage_categories') }}"><i class="fa-solid fa-folder"></i> Categories</a>
+                <a href="/admin/categories"><i class="fa-solid fa-folder"></i> Categories</a>
             </li>
             <li class="admin-menu-item">
-                <a href="{{ url_for('admin.manage_styles') }}" class="active"><i class="fa-solid fa-palette"></i> Styles</a>
+                <a href="/admin/styles" class="active"><i class="fa-solid fa-palette"></i> Styles</a>
+            </li>
+            <li class="admin-menu-item" style="margin-top:20px; border-top:1px solid #2C2A29; padding-top:12px;">
+                <a href="/admin/logout" style="color:#e06c75;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                </a>
             </li>
         </ul>
     </aside>
@@ -40,9 +38,7 @@
             <!-- Add Form -->
             <div class="admin-form-card">
                 <h3 style="font-family:'Playfair Display', serif; font-size:1.2rem; margin-bottom:16px;">Add New Style</h3>
-                <form action="{{ url_for('admin.manage_styles') }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+                <form action="/admin/styles" method="POST">
                     <div class="form-group">
                         <label>Style Name *</label>
                         <input type="text" name="name" class="form-control" placeholder="e.g. Art Deco" required>
@@ -72,14 +68,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for st in styles %}
+                            <% styles.forEach(function(st) { %>
                             <tr>
-                                <td style="font-weight:600;">{{ st.name }}</td>
-                                <td><code>{{ st.slug }}</code></td>
-                                <td style="color:#6E6A66; font-size:0.85rem;">{{ st.description or '—' }}</td>
-                                <td>{{ st.designs|length }}</td>
+                                <td style="font-weight:600;"><%= st.name %></td>
+                                <td><code><%= st.slug %></code></td>
+                                <td style="color:#6E6A66; font-size:0.85rem;"><%= st.description || '—' %></td>
+                                <td><%= st.designs.length %></td>
                             </tr>
-                            {% endfor %}
+                            <% }); %>
                         </tbody>
                     </table>
                 </div>
@@ -87,4 +83,5 @@
         </div>
     </main>
 </div>
-{% endblock %}
+
+<%- include('../partials/footer') %>

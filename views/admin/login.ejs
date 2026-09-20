@@ -1,8 +1,5 @@
-{% extends "base.html" %}
+<%- include('../partials/header') %>
 
-{% block title %}Admin Login — InteriorCraft{% endblock %}
-
-{% block content %}
 <div class="section-container" style="max-width: 480px; margin: 40px auto 80px;">
     <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:40px; box-shadow:var(--shadow-hover);">
         <div style="text-align:center; margin-bottom:28px;">
@@ -11,21 +8,19 @@
             <p style="color:var(--text-muted); font-size:0.9rem;">Sign in to access the design dashboard and content manager.</p>
         </div>
 
-        <form action="{{ url_for('auth.login') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+        <form action="/admin/login" method="POST">
             <div style="margin-bottom:20px;">
                 <label style="display:block; font-weight:600; font-size:0.85rem; margin-bottom:6px;">Username or Email</label>
-                <input type="text" name="username" class="form-control" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px;" required autofocus>
+                <input type="text" name="username" class="form-control" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px;" value="admin" required autofocus>
             </div>
 
             <div style="margin-bottom:20px;">
                 <label style="display:block; font-weight:600; font-size:0.85rem; margin-bottom:6px;">Password</label>
-                <input type="password" name="password" class="form-control" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px;" required>
+                <input type="password" name="password" class="form-control" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px;" value="adminpassword" required>
             </div>
 
             <div style="margin-bottom:24px; display:flex; align-items:center; gap:8px;">
-                <input type="checkbox" name="remember" id="remember">
+                <input type="checkbox" name="remember" id="remember" checked>
                 <label for="remember" style="font-size:0.85rem; color:var(--text-muted);">Remember this device</label>
             </div>
 
@@ -35,4 +30,5 @@
         </form>
     </div>
 </div>
-{% endblock %}
+
+<%- include('../partials/footer') %>

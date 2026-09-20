@@ -1,0 +1,65 @@
+    </main>
+
+    <!-- Floating Chatbot Widget Trigger -->
+    <div class="chatbot-widget-trigger" onclick="toggleChatbot()" title="Open AI Design Assistant">
+        <i class="fa-solid fa-comments"></i>
+    </div>
+
+    <!-- Chatbot Modal -->
+    <div class="chatbot-modal" id="chatbotModal">
+        <div class="chatbot-header">
+            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Interior Assistant</h3>
+            <button class="chatbot-close" onclick="toggleChatbot()">&times;</button>
+        </div>
+        <div class="chatbot-body" id="chatbotBody">
+            <div class="chat-bubble bot">
+                👋 <strong>Welcome!</strong><br><br>
+                Ask me any questions about styling your home, selecting furniture, matching colors, or finding items to recreate room looks!
+            </div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="text" id="chatbotInput" placeholder="Ask about Scandinavian bedroom, colors, tips..." onkeypress="handleChatKey(event)" autocomplete="off">
+            <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>InteriorCraft</h3>
+                <p>Curated room design inspirations paired with direct shopping links so you can buy the exact furniture, lighting, and decor needed to recreate the pictured look in your home.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop By Room</h4>
+                <ul>
+                    <% if (typeof all_categories !== 'undefined') { %>
+                        <% all_categories.forEach(function(cat) { %>
+                            <li><a href="/explore?category=<%= cat.slug %>"><%= cat.name %></a></li>
+                        <% }); %>
+                    <% } %>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Design Styles</h4>
+                <ul>
+                    <% if (typeof all_styles !== 'undefined') { %>
+                        <% all_styles.forEach(function(style) { %>
+                            <li><a href="/explore?style=<%= style.slug %>"><%= style.name %></a></li>
+                        <% }); %>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 InteriorCraft Platform. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/js/chatbot.js"></script>
+    <% if (typeof extra_js !== 'undefined' && extra_js) { %>
+        <script src="<%= extra_js %>"></script>
+    <% } %>
+</body>
+</html>
